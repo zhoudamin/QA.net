@@ -5,6 +5,7 @@
 3. 打开Redis和solr
 
 开发技术点：
+
 	* 开发工具Git，IntilliJ
 	* Spring Boot，Velocity
 	* myBatis
