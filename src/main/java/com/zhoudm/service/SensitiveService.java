@@ -62,7 +62,6 @@ public class SensitiveService implements InitializingBean {
             return subNodes.size();
         }
 
-
     }
 
 
@@ -74,6 +73,7 @@ public class SensitiveService implements InitializingBean {
 
     /**
      * 判断是否是一个符号
+     * 把空格什么的去掉
      */
     private boolean isSymbol(char c) {
         int ic = (int) c;
@@ -111,7 +111,7 @@ public class SensitiveService implements InitializingBean {
             tempNode = tempNode.getSubNode(c);
 
             // 当前位置的匹配结束
-            if (tempNode == null) {
+            if (tempNode == null) {       //不存在敏感词
                 // 以begin开始的字符串不存在敏感词
                 result.append(text.charAt(begin));
                 // 跳到下一个字符开始测试
@@ -122,14 +122,14 @@ public class SensitiveService implements InitializingBean {
             } else if (tempNode.isKeywordEnd()) {
                 // 发现敏感词， 从begin到position的位置用replacement替换掉
                 result.append(replacement);
-                position = position + 1;
+                position = position + 1;   //从position后面开始遍历找新的敏感词，因为前面已经是敏感词打码了
                 begin = position;
                 tempNode = rootNode;
             } else {
                 ++position;
             }
         }
-
+            //最后一串
         result.append(text.substring(begin));
 
         return result.toString();
@@ -166,6 +166,7 @@ public class SensitiveService implements InitializingBean {
         rootNode = new TrieNode();
 
         try {
+            // 读文本
             InputStream is = Thread.currentThread().getContextClassLoader()
                     .getResourceAsStream("SensitiveWords.txt");
             InputStreamReader read = new InputStreamReader(is);
