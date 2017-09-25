@@ -7,6 +7,7 @@ import java.util.Map;
  * Created by zhoudm on 2016/7/30.
  */
 public class EventModel {
+    //事件信息  字段
     private EventType type;
     private int actorId;
     private int entityType;

@@ -23,6 +23,7 @@ import java.util.Map;
 public class EventConsumer implements InitializingBean, ApplicationContextAware {
     private static final Logger logger = LoggerFactory.getLogger(EventConsumer.class);
     private Map<EventType, List<EventHandler>> config = new HashMap<EventType, List<EventHandler>>();
+    //知道当前有多少个handler实现类
     private ApplicationContext applicationContext;
 
     @Autowired
@@ -30,12 +31,15 @@ public class EventConsumer implements InitializingBean, ApplicationContextAware 
 
     @Override
     public void afterPropertiesSet() throws Exception {
+        //找到所有的eventHandler实现类
         Map<String, EventHandler> beans = applicationContext.getBeansOfType(EventHandler.class);
         if (beans != null) {
+            //map循环，容器里找到所有eventhandler，注册好
             for (Map.Entry<String, EventHandler> entry : beans.entrySet()) {
                 List<EventType> eventTypes = entry.getValue().getSupportEventTypes();
 
                 for (EventType type : eventTypes) {
+                    //如果不包含，注册put进去
                     if (!config.containsKey(type)) {
                         config.put(type, new ArrayList<EventHandler>());
                     }
@@ -44,6 +48,7 @@ public class EventConsumer implements InitializingBean, ApplicationContextAware 
             }
         }
 
+        //起线程
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {

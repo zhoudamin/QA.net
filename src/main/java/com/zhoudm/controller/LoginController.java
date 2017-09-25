@@ -30,6 +30,16 @@ public class LoginController {
     @Autowired
     EventProducer eventProducer;
 
+    /**
+     *
+     * @param model
+     * @param username  用户名
+     * @param password  密码
+     * @param next
+     * @param rememberme  记住我  传入状态  默认false
+     * @param response
+     * @return
+     */
     @RequestMapping(path = {"/reg/"}, method = {RequestMethod.POST})
     public String reg(Model model, @RequestParam("username") String username,
                       @RequestParam("password") String password,
@@ -38,10 +48,10 @@ public class LoginController {
                       HttpServletResponse response) {
         try {
             Map<String, Object> map = userService.register(username, password);
-            if (map.containsKey("ticket")) {
+            if (map.containsKey("ticket")) {       //如果包含ticket，则用cookie读取ticket
                 Cookie cookie = new Cookie("ticket", map.get("ticket").toString());
                 cookie.setPath("/");
-                if (rememberme) {
+                if (rememberme) {          //如果记住是true，则设置个cookie的时间
                     cookie.setMaxAge(3600*24*5);
                 }
                 response.addCookie(cookie);
